@@ -1,0 +1,20 @@
+{
+  "overall_score": 0.7368333333333333,
+  "difficulties": [
+    {
+      "difficulty": "easy",
+      "score": 0.99,
+      "total_reward": 38.0
+    },
+    {
+      "difficulty": "medium",
+      "score": 0.753167,
+      "total_reward": 23.0
+    },
+    {
+      "difficulty": "hard",
+      "score": 0.467333,
+      "total_reward": 27.0
+    }
+  ]
+}

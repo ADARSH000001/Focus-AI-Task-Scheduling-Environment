@@ -1,0 +1,104 @@
+id: focus-ai-env
+name: Focus AI — Cognitive Task Scheduling Environment
+
+description: >
+  A real-world RL environment modelling a knowledge worker's day.
+  An AI agent must schedule tasks, manage cognitive energy, and meet
+  deadlines while avoiding burnout. Tasks are named real work items
+  (incident response, code review, client presentations) making the
+  environment immediately useful for evaluating productivity agents.
+
+entry_point: env:FocusEnv
+
+tasks:
+  - id: easy
+    name: easy_scheduling
+    grader: "reward_and_tasks:grade_easy"
+    description: >
+      Morning sprint — high energy (80/100), 2 tasks with clear priority
+      ordering. A smart agent completes both on time. Tests basic
+      priority-aware scheduling.
+      Scoring: 60% task completion + 40% on-time delivery.
+
+  - id: medium
+    name: medium_scheduling
+    grader: "reward_and_tasks:grade_medium"
+    description: >
+      Afternoon crunch — medium energy (60/100), 3 tasks with mixed
+      priorities and tighter deadlines. Requires balancing energy recovery
+      against deadline pressure. Tests workload management.
+      Scoring: 40% completion + 35% on-time + 25% energy efficiency.
+
+  - id: hard
+    name: hard_scheduling
+    grader: "reward_and_tasks:grade_hard"
+    description: >
+      Late-day crisis — medium energy (55/100), 6 competing tasks including
+      two critical blockers (incident + security patch) on tight deadlines.
+      Tests genuine multi-step planning under resource constraints.
+      Scoring: 35% completion + 30% on-time + 20% energy + 15% priority.
+
+observation_space:
+  type: object
+  required:
+    - time
+    - energy
+    - tasks
+  fields:
+    time:           float    # current hour of day (9.0 – 24.0)
+    energy:         integer  # cognitive energy 0–100
+    energy_level:   string   # "low" | "medium" | "high"
+    tasks:
+      type: list
+      items:
+        id:         string   # task identifier used in action strings
+        name:       string   # human-readable task description
+        priority:   string   # "high" | "medium" | "low"
+        deadline:   integer  # must complete by this hour
+        duration:   integer  # hours of work required
+        category:   string   # e.g. "engineering", "writing"
+        completed:  boolean
+    current_task:   string   # id of active task (nullable)
+    recent_actions: list     # last 3 actions taken
+    goal:           string   # episode objective text
+    legal_actions:  list     # currently valid action strings
+
+action_space:
+  type: string
+  description: >
+    All actions are plain strings. Return exactly one per step.
+  allowed_actions:
+    - start_task    # start_task('<id>')   — costs time + energy
+    - take_break    # take_break(<hours>)  — recovers energy, costs time
+    - switch_task   # switch_task('<id>')  — 0.5h context-switch cost
+    - noop          # noop()               — penalised -3 reward
+
+reward:
+  type: object
+  range: [-20, 20]
+  description: >
+    Continuous shaped reward every step. Depends on task priority,
+    deadline outcome, energy level at decision time, and anti-spam penalties.
+  fields:
+    reward:          float
+    task_completed:  boolean
+    before_deadline: boolean
+    missed_deadline: boolean
+    priority:        string   # nullable
+
+scoring:
+  description: >
+    Each task's final score is STRICTLY inside the open interval (0, 1).
+    The safe_score() function guarantees: 0.01 ≤ score ≤ 0.99.
+    Minimum achievable: 0.01 (nothing done).
+    Maximum achievable: 0.99 (perfect episode).
+  formula: "safe_score(raw) = 0.01 + 0.98 * clamp(raw, 0.0, 1.0)"
+
+max_steps: 10
+
+tags:
+  - productivity
+  - scheduling
+  - energy-management
+  - knowledge-work
+  - openenv

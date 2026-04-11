@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "focus-ai-task-scheduler"
+version = "3.0.0"
+description = "RL environment for intelligent task scheduling with energy-aware decisions, deadlines, and priority optimization."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "openai>=1.57.0",
+    "pyyaml>=6.0.2",
+    "huggingface_hub>=0.24.0",
+    "openenv-core>=0.2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx"]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.openenv]
+entry_point = "env:FocusEnv"
+tasks = ["easy", "medium", "hard"]

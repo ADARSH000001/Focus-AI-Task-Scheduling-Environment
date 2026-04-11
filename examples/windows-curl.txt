@@ -1,0 +1,4 @@
+curl http://localhost:7860/health
+curl http://localhost:7860/validate
+curl -X POST http://localhost:7860/reset -H "Content-Type: application/json" -d "{\"difficulty\":\"easy\"}"
+curl -X POST http://localhost:7860/step -H "Content-Type: application/json" -d "{\"action\":\"start_task('report')\"}"

@@ -1,0 +1,21 @@
+### Health
+GET http://localhost:7860/health
+
+### Validate
+GET http://localhost:7860/validate
+
+### Reset
+POST http://localhost:7860/reset
+Content-Type: application/json
+
+{
+  "difficulty": "easy"
+}
+
+### Step
+POST http://localhost:7860/step
+Content-Type: application/json
+
+{
+  "action": "start_task('report')"
+}
